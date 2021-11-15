@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="load_runner">
+    <xacro:arg name="robot_model" default="load_runner_300lt"/>
+
+    <xacro:include filename="$(find load_runner_description)/urdf/inertia_macro.urdf.xacro"/>
+    <xacro:include filename="$(find load_runner_description)/urdf/$(arg robot_model).urdf.xacro"/>
+    <xacro:include filename="$(find load_runner_description)/urdf/gazebo_$(arg robot_model).urdf.xacro"/>
+    <xacro:include filename="$(find load_runner_description)/urdf/ros2_control_$(arg robot_model).urdf.xacro"/>
+
+    <xacro:insert_robot prefix=""/>
+    <xacro:insert_ros2_control name="$(arg robot_model)_system"/>
+</robot>

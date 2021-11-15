@@ -1,0 +1,370 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="insert_robot" params="prefix">
+
+        <link name="base_footprint"/>
+        <link name="base_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/base_link.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/base_link.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="-0.006 0.000 0.059" rpy="0 0 0"/>
+                <mass value="61.015"/>
+                <inertia ixx="1.717793" ixy="0.018283" ixz="0.034282" iyy="4.188873" iyz="-0.000046" izz="5.448230"/>
+            </inertial>
+        </link>
+
+        <joint name="base_link_fixed_joint" type="fixed">
+            <parent link="base_footprint"/>
+            <child link="base_link"/>
+            <origin xyz="0 0 0.08" rpy="0 0 0"/>
+        </joint>
+
+
+        <xacro:macro name="insert_wheel" params="prefix dir">
+            <link name="${prefix}_wheel">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 ${dir*pi/2}"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/main_wheel.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 ${dir*-0.011} 0.0" rpy="${pi/2} 0 0"/>
+                    <geometry>
+                        <!-- <mesh filename="package://load_runner_description/meshes/load_runner_300lt/main_wheel.stl" scale="1 1 1"/> -->
+                        <cylinder radius="0.08" length="0.05"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0.00 ${dir*-0.011} 0.000" rpy="0 0 ${dir*pi/2}"/>
+                    <mass value="0.5865"/>
+                    <inertia ixx="0.001855" ixy="0.0" ixz="0.0" iyy="0.001049" iyz="0.0" izz="0.001049"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix}_wheel_joint" type="continuous">
+                <parent link="base_link"/>
+                <child link="${prefix}_wheel"/>
+                <axis xyz="0 1 0"/>
+                <origin xyz="0 ${dir*0.246} 0" rpy="0 0 0"/>
+            </joint>
+        </xacro:macro>
+
+        <xacro:insert_wheel prefix="l" dir="1"/>
+        <xacro:insert_wheel prefix="r" dir="-1"/>
+
+        <link name="base_up">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/base_up.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/base_up.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0.000 0.000 -0.032" rpy="0 0 0"/>
+                <mass value="21.9730"/>
+                <inertia ixx="0.366425" ixy="-0.000378" ixz="0.000104" iyy="0.975218" iyz="-0.000058" izz="1.292054"/>
+            </inertial>
+        </link>
+
+        <joint name="lift_up_joint" type="prismatic">
+            <parent link="base_link"/>
+            <child link="base_up"/>
+            <axis xyz="0 0 1"/>
+            <origin xyz="0 0 0.177" rpy="0 0 0"/>
+            <limit effort="100" velocity="0.02" lower="0.0" upper="0.05"/>
+        </joint>
+
+        <link name="plate_up">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/plate_up.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/plate_up.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0.000 0.000 -0.002" rpy="0 0 0"/>
+                <mass value="6.1398"/>
+                <inertia ixx="0.148201" ixy="0.000004" ixz="0.0" iyy="0.354039" iyz="0.0" izz="0.501707"/>
+            </inertial>
+        </link>
+
+        <joint name="lift_turn_joint" type="revolute">
+            <parent link="base_up"/>
+            <child link="plate_up"/>
+            <axis xyz="0 0 1"/>
+            <origin xyz="0 0 0.033" rpy="0 0 0"/>
+            <limit effort="100" velocity="1.5" lower="${-2*pi}" upper="${2*pi}"/>
+        </joint>
+
+        <link name="external_case">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/external_case.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/external_case.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0.000 0.000 0.053" rpy="0 0 0"/>
+                <mass value="4.6232"/>
+                <inertia ixx="1.584018" ixy="-0.000466" ixz="0.000226" iyy="3.823989" iyz="0.000004" izz="5.044373"/>
+            </inertial>
+        </link>
+
+        <joint name="external_case_fixed_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="external_case"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </joint>
+
+        <xacro:macro name="insert_caster_wheel" params="prefix1 prefix2 dir1 dir2">
+            <link name="${prefix1}_${prefix2}_caster_mount">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/caster_mount.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/caster_mount.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0.000 0.000 -0.007" rpy="0 0 0"/>
+                    <mass value="0.0762"/>
+                    <inertia ixx="0.000055" ixy="0.0" ixz="0.0" iyy="0.000055" iyz="0.0" izz="0.000106"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}_${prefix2}_caster_mount_fixed_joint" type="fixed">
+                <parent link="base_link"/>
+                <child link="${prefix1}_${prefix2}_caster_mount"/>
+                <origin xyz="${dir1*0.285} ${dir2*0.140} 0.035" rpy="0 0 0"/>
+            </joint>
+
+            <link name="${prefix1}_${prefix2}_caster_rotate">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/caster_rotate.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/caster_rotate.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="-0.016 0.000 -0.034" rpy="0 0 0"/>
+                    <mass value="0.1935"/>
+                    <inertia ixx="0.000159" ixy="0.0" ixz="-0.000030" iyy="0.000153" iyz="0.0" izz="0.000168"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}_${prefix2}_caster_rotate_joint" type="continuous">
+                <parent link="${prefix1}_${prefix2}_caster_mount"/>
+                <child link="${prefix1}_${prefix2}_caster_rotate"/>
+                <axis xyz="0 0 1"/>
+                <origin xyz="0 0 -0.01656" rpy="0 0 0"/>
+            </joint>
+
+            <link name="${prefix1}_${prefix2}_caster_wheel1">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/caster_wheel.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0.0115 0" rpy="${pi/2} 0 0"/>
+                    <geometry>
+                        <!-- <mesh filename="package://load_runner_description/meshes/load_runner_300lt/caster_wheel.stl" scale="1 1 1"/> -->
+                        <cylinder radius="0.03746" length="0.023"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0.000 0.011 0.000" rpy="0 0 0"/>
+                    <mass value="0.0585"/>
+                    <inertia ixx="0.000023" ixy="0.0" ixz="0.0" iyy="0.000040" iyz="0.0" izz="0.000023"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}_${prefix2}_caster_wheel1_joint" type="continuous">
+                <parent link="${prefix1}_${prefix2}_caster_rotate"/>
+                <child link="${prefix1}_${prefix2}_caster_wheel1"/>
+                <axis xyz="0 1 0"/>
+                <origin xyz="-0.035 -0.0245 -0.06097984" rpy="0 0 0"/>
+            </joint>
+
+            <link name="${prefix1}_${prefix2}_caster_wheel2">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/caster_wheel.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0.0115 0" rpy="${pi/2} 0 0"/>
+                    <geometry>
+                        <!-- <mesh filename="package://load_runner_description/meshes/load_runner_300lt/caster_wheel.stl" scale="1 1 1"/> -->
+                        <cylinder radius="0.03746" length="0.023"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0.000 0.011 0.000" rpy="0 0 0"/>
+                    <mass value="0.0585"/>
+                    <inertia ixx="0.000023" ixy="0.0" ixz="0.0" iyy="0.000040" iyz="0.0" izz="0.000023"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}_${prefix2}_caster_wheel2_joint" type="continuous">
+                <parent link="${prefix1}_${prefix2}_caster_rotate"/>
+                <child link="${prefix1}_${prefix2}_caster_wheel2"/>
+                <axis xyz="0 1 0"/>
+                <origin xyz="-0.035 0.0015 -0.06097984" rpy="0 0 0"/>
+            </joint>
+        </xacro:macro>
+
+        <xacro:insert_caster_wheel prefix1="front" prefix2="l" dir1="1" dir2="1"/>
+        <xacro:insert_caster_wheel prefix1="front" prefix2="r" dir1="1" dir2="-1"/>
+        <xacro:insert_caster_wheel prefix1="rear" prefix2="l" dir1="-1" dir2="1"/>
+        <xacro:insert_caster_wheel prefix1="rear" prefix2="r" dir1="-1" dir2="-1"/>
+
+        <xacro:macro name="insert_lidar" params="prefix dir">
+            <link name="${prefix}_lidar_mount">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/sick_lidar_assy.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/sick_lidar_assy.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="-0.002 -0.034 0.036" rpy="0 0 0"/>
+                    <mass value="0.1467"/>
+                    <inertia ixx="0.000114" ixy="0.0" ixz="0.000002" iyy="0.000105" iyz="0.0" izz="0.000078"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix}_lidar_mount_fixed_joint" type="fixed">
+                <parent link="base_link"/>
+                <child link="${prefix}_lidar_mount"/>
+                <origin xyz="${dir*0.40503158} ${-dir*0.206382630} 0.106" rpy="0 0 ${(45-(dir*90))*pi/180}"/>
+            </joint>
+
+            <link name="${prefix}_lidar"/>
+
+            <joint name="${prefix}_lidar_fixed_joint" type="fixed">
+                <parent link="${prefix}_lidar_mount"/>
+                <child link="${prefix}_lidar"/>
+                <origin xyz="0 -0.034 0.060" rpy="0 0 0"/>
+            </joint>
+        </xacro:macro>
+
+        <xacro:insert_lidar prefix="front" dir="1"/>
+        <xacro:insert_lidar prefix="rear" dir="-1"/>
+
+        <xacro:macro name="insert_lamp" params="prefix1 prefix2 dir1 dir2">
+            <link name="${prefix1}_${prefix2}_lamp">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/lamp_assy.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/lamp_assy.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0.013 0.000 0.048" rpy="0 0 0"/>
+                    <mass value="0.0398"/>
+                    <inertia ixx="0.000035" ixy="0.0" ixz="0.0" iyy="0.000036" iyz="0.0" izz="0.000004"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}_${prefix2}_lamp_fixed_joint" type="fixed">
+                <parent link="base_link"/>
+                <child link="${prefix1}_${prefix2}_lamp"/>
+                <origin xyz="${dir1*0.4} ${dir2*0.250} -0.013" rpy="0 0 ${(dir2*(90-(dir1*45)))*pi/180}"/>
+            </joint>
+        </xacro:macro>
+
+        <xacro:insert_lamp prefix1="front" prefix2="l" dir1="1" dir2="1"/>
+        <xacro:insert_lamp prefix1="front" prefix2="r" dir1="1" dir2="-1"/>
+        <xacro:insert_lamp prefix1="rear" prefix2="l" dir1="-1" dir2="1"/>
+        <xacro:insert_lamp prefix1="rear" prefix2="r" dir1="-1" dir2="-1"/>
+
+        <link name="front_camera_assy">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/visual/load_runner_300lt/front_camera_assy.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://load_runner_description/meshes/collision/load_runner_300lt/front_camera_assy.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0.017 0.000 0.006" rpy="0 0 0"/>
+                <mass value="0.0768"/>
+                <inertia ixx="0.000064" ixy="0.0" ixz="-0.000001" iyy="0.000021" iyz="0.0" izz="0.000055"/>
+            </inertial>
+        </link>
+
+        <joint name="front_camera_mount_fixed_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="front_camera_assy"/>
+            <origin xyz="0.417 0 0.114" rpy="0 0 0"/>
+        </joint>
+
+        <link name="front_camera"/>
+
+        <joint name="front_camera_fixed_joint" type="fixed">
+            <parent link="front_camera_assy"/>
+            <child link="front_camera"/>
+            <origin xyz="0.032 0 0.018" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+</robot>
