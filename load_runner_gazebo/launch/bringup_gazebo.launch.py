@@ -3,16 +3,16 @@ from os import environ
 from os import pathsep
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, Shutdown, IncludeLaunchDescription
+from launch.actions import ExecuteProcess, DeclareLaunchArgument, Shutdown, IncludeLaunchDescription, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command, TextSubstitution, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    ld = LaunchDescription()
-
     robot_model = DeclareLaunchArgument("robot_model", default_value="load_runner_300lt")
+    world_name = DeclareLaunchArgument("world_name", default_value="simple_world.sdf")
 
     environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
     ign_gazebo_paths = '/usr/lib/x86_64-linux-gnu/ign-gazebo-5/plugins'
@@ -28,7 +28,14 @@ def generate_launch_description():
             '/launch/ign_gazebo.launch.py'
         ]),
         launch_arguments={
-            'ign_args': '-r default.sdf -v 0'
+            'ign_args': [
+                            '-r -v0 ',
+                            PathJoinSubstitution([
+                                    get_package_share_directory('load_runner_gazebo'),
+                                    'worlds',
+                                    LaunchConfiguration('world_name')
+                            ])
+                        ]
         }.items(),
     )
 
@@ -90,13 +97,61 @@ def generate_launch_description():
         output='screen'
     )
 
-    ld.add_action(robot_model)
-    ld.add_action(ign_gazebo)
-    ld.add_action(upload_robot)
-    ld.add_action(spawn_node)
-    ld.add_action(ign_bridge)
-    ld.add_action(static_tf_front_lidar)
-    ld.add_action(static_tf_rear_lidar)
-    ld.add_action(jsp_node)
+    load_joint_state_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+                'joint_state_broadcaster'],
+        output='screen'
+    )
 
-    return ld
+    load_lift_up_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+                'lift_up_controller'],
+        output='screen'
+    )
+
+    load_lift_turn_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+                'lift_turn_controller'],
+        output='screen'
+    )
+
+    load_diff_drive_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+                'diff_drive_controller'],
+        output='screen'
+    )
+
+    return LaunchDescription([
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn_node,
+                on_exit=[load_joint_state_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_controller,
+                on_exit=[load_lift_up_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_lift_up_controller,
+                on_exit=[load_lift_turn_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_lift_turn_controller,
+                on_exit=[load_diff_drive_controller],
+            )
+        ),
+        robot_model,
+        world_name,
+        upload_robot,
+        ign_gazebo,
+        spawn_node,
+        ign_bridge,
+        static_tf_front_lidar,
+        static_tf_rear_lidar
+    ])
