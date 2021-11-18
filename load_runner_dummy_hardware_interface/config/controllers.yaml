@@ -1,0 +1,61 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    joint_a_controller:
+      type: position_controllers/JointGroupPositionController
+
+    joint_b_controller:
+      type: position_controllers/JointGroupPositionController
+
+    joint_c_controller:
+      type: velocity_controllers/JointGroupVelocityController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+
+joint_a_controller:
+  ros__parameters:
+    joints:
+      - joint_a
+    write_op_modes:
+      - joint_a
+
+    interface_name: position
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+      - velocity
+
+joint_b_controller:
+  ros__parameters:
+    joints:
+      - joint_b
+    write_op_modes:
+      - joint_b
+
+    interface_name: position
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+      - velocity
+
+joint_c_controller:
+  ros__parameters:
+    joints:
+      - joint_c
+    write_op_modes:
+      - joint_c
+
+    interface_name: velocity
+    command_interfaces:
+      - velocity
+
+    state_interfaces:
+      - position
+      - velocity

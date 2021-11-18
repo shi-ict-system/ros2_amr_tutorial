@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="dummy_robot">
+    <xacro:include filename="$(find load_runner_dummy_hardware_interface)/urdf/ros2_control_dummy_robot.urdf.xacro"/>
+
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+    <link name="link4"/>
+
+    <joint name="joint_a" type="continuous">
+        <parent link="link1"/>
+        <child link="link2"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_b" type="continuous">
+        <parent link="link2"/>
+        <child link="link3"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="joint_c" type="continuous">
+        <parent link="link3"/>
+        <child link="link4"/>
+        <axis xyz="0 0 1"/>
+        <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:insert_ros2_control name="dummy_robot_system"/>
+</robot>

@@ -1,0 +1,9 @@
+<library path="load_runner_dummy_hardware_interface">
+    <class name="load_runner_dummy_hardware_interface/DummyRobotSystemHardware"
+        type="load_runner_dummy_hardware_interface::DummyRobotSystemHardware"
+        base_class_type="hardware_interface::SystemInterface">
+        <description>
+            The ROS2 Control dummy robot protocol.
+        </description>
+    </class>
+</library>
