@@ -94,6 +94,11 @@ def generate_launch_description():
         package='joint_state_publisher',
         executable='joint_state_publisher',
         name='joint_state_publisher',
+        parameters=[{
+            "source_list": ['joint_states'],
+            "rate": 100.0,
+            "use_sim_time": True
+        }],
         output='screen'
     )
 
@@ -115,9 +120,9 @@ def generate_launch_description():
         output='screen'
     )
 
-    load_diff_drive_controller = ExecuteProcess(
+    load_base_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
-                'diff_drive_controller'],
+                'base_controller'],
         output='screen'
     )
 
@@ -143,7 +148,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_lift_turn_controller,
-                on_exit=[load_diff_drive_controller],
+                on_exit=[load_base_controller],
             )
         ),
         robot_model,
@@ -151,6 +156,7 @@ def generate_launch_description():
         upload_robot,
         ign_gazebo,
         spawn_node,
+        jsp_node,
         ign_bridge,
         static_tf_front_lidar,
         static_tf_rear_lidar

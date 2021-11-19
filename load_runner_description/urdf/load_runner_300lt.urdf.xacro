@@ -210,7 +210,7 @@
                     <origin xyz="0 0.0115 0" rpy="${pi/2} 0 0"/>
                     <geometry>
                         <!-- <mesh filename="package://load_runner_description/meshes/load_runner_300lt/caster_wheel.stl" scale="1 1 1"/> -->
-                        <cylinder radius="0.03746" length="0.023"/>
+                        <cylinder radius="0.0373" length="0.023"/>
                     </geometry>
                 </collision>
                 <inertial>
@@ -238,7 +238,7 @@
                     <origin xyz="0 0.0115 0" rpy="${pi/2} 0 0"/>
                     <geometry>
                         <!-- <mesh filename="package://load_runner_description/meshes/load_runner_300lt/caster_wheel.stl" scale="1 1 1"/> -->
-                        <cylinder radius="0.03746" length="0.023"/>
+                        <cylinder radius="0.0373" length="0.023"/>
                     </geometry>
                 </collision>
                 <inertial>
