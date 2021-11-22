@@ -57,6 +57,9 @@ def generate_launch_description():
             '-name', LaunchConfiguration('robot_model'),
             '-topic', 'robot_description'
         ],
+        parameters=[{
+            "use_sim_time": True
+        }],
     )
 
     ign_bridge = Node(
@@ -65,6 +68,9 @@ def generate_launch_description():
         arguments=[ '/front_scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan',
                     '/rear_scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan'
         ],
+        parameters=[{
+            "use_sim_time": True
+        }],
         output='screen'
     )
 
@@ -76,6 +82,9 @@ def generate_launch_description():
                     "front_lidar",
                     [LaunchConfiguration('robot_model'), "/base_footprint/front_lidar"]
         ],
+        parameters=[{
+            "use_sim_time": True
+        }],
         output='screen'
     )
 
@@ -87,6 +96,9 @@ def generate_launch_description():
                     "rear_lidar",
                     [LaunchConfiguration('robot_model'), "/base_footprint/rear_lidar"]
         ],
+        parameters=[{
+            "use_sim_time": True
+        }],
         output='screen'
     )
 

@@ -29,7 +29,7 @@ def generate_launch_description():
                     ' robot_model:=',
                     LaunchConfiguration('robot_model')
                 ]),
-            'use_sim_type': True
+            'use_sim_time': True
         }]
     )
 
