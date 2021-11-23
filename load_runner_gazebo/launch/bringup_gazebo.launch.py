@@ -65,7 +65,8 @@ def generate_launch_description():
     ign_bridge = Node(
         package='ros_ign_bridge',
         executable='parameter_bridge',
-        arguments=[ '/front_scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan',
+        arguments=[ '/clock@rosgraph_msgs/msg/Clock@ignition.msgs.Clock',
+                    '/front_scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan',
                     '/rear_scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan'
         ],
         parameters=[{
@@ -163,13 +164,18 @@ def generate_launch_description():
                 on_exit=[load_base_controller],
             )
         ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_base_controller,
+                on_exit=[ign_bridge],
+            )
+        ),
         robot_model,
         world_name,
         upload_robot,
         ign_gazebo,
         spawn_node,
         jsp_node,
-        ign_bridge,
         static_tf_front_lidar,
         static_tf_rear_lidar
     ])
