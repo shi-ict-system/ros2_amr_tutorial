@@ -113,31 +113,4 @@ def generate_launch_description():
             parameters=[{'use_sim_time': use_sim_time},
                         {'autostart': autostart},
                         {'node_names': lifecycle_nodes}]),
-
-        Node(
-            package='nav2_map_server',
-            executable='map_server',
-            name='filter_mask_server',
-            output='screen',
-            emulate_tty=True,
-            parameters=[configured_params]),
-
-        Node(
-            package='nav2_map_server',
-            executable='costmap_filter_info_server',
-            name='costmap_filter_info_server',
-            output='screen',
-            emulate_tty=True,
-            parameters=[configured_params]),
-
-        Node(
-            package='nav2_lifecycle_manager',
-            executable='lifecycle_manager',
-            name='lifecycle_manager_costmap_filters',
-            output='screen',
-            emulate_tty=True,
-            parameters=[{'use_sim_time': use_sim_time},
-                        {'autostart': True},
-                        {'node_names': ['filter_mask_server', 'costmap_filter_info_server']}])
-
     ])

@@ -222,6 +222,13 @@ local_costmap:
           raytrace_min_range: 0.0
           obstacle_max_range: 4.5
           obstacle_min_range: 0.0
+      # KEEPOUT FILTER START
+      filters: ["keepout_filter"]
+      keepout_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/costmap_filter_info"
+      # KEEPOUT FILTER END
       always_send_full_costmap: True
   local_costmap_client:
     ros__parameters:
@@ -245,6 +252,10 @@ global_costmap:
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       # KEEPOUT FILTER START
       filters: ["keepout_filter"]
+      keepout_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/costmap_filter_info"
       # KEEPOUT FILTER END
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -278,12 +289,6 @@ global_costmap:
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
       always_send_full_costmap: True
-      # KEEPOUT FILTER START
-      keepout_filter:
-        plugin: "nav2_costmap_2d::KeepoutFilter"
-        enabled: True
-        filter_info_topic: "/costmap_filter_info"
-      # KEEPOUT FILTER END
   global_costmap_client:
     ros__parameters:
       use_sim_time: True
@@ -306,7 +311,7 @@ filter_mask_server:
     use_sim_time: true
     frame_id: "map"
     topic_name: "/keepout_filter_mask"
-    yaml_filename: "/home/byeongkyu/dev_ws/src/ros2_amr_tutorial/load_runner_navigation2/maps/keepout_mask_1637303820.yaml"
+    yaml_filename: "keepout_mask_1637303820.yaml"
 # KEEPOUT FILTER END
 
 map_server:
